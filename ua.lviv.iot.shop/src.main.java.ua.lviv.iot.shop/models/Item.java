@@ -6,13 +6,18 @@ import ua.lviv.iot.shop.enums.Gender;
 import ua.lviv.iot.shop.enums.Size;
 import ua.lviv.iot.shop.enums.Target;
 
+import javax.persistence.*;
 
+@MappedSuperclass
 @Data
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 @ToString
-
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Item {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Integer id;
     protected Size size;
     protected Gender gender;
     protected String name;
@@ -23,4 +28,3 @@ public class Item {
     protected Double price;
     protected Target target;
 }
-

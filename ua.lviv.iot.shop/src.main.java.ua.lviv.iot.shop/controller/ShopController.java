@@ -1,66 +1,62 @@
 package ua.lviv.iot.shop.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.lviv.iot.shop.models.Shoe;
+import ua.lviv.iot.shop.service.OrderService;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-@RequestMapping("/orders")
 @RestController
+@RequestMapping("/orders")
 public class ShopController {
-    private final Map<Integer, Shoe> shoes = new HashMap<>();
-    private AtomicInteger idCounter = new AtomicInteger();
+    @Autowired
+    OrderService orderService;
 
     @GetMapping
-    public Collection<Shoe> getShoes() {
-        return new ArrayList<Shoe>(shoes.values());
+    public List<Shoe> getList() {
+        return orderService.listAllShoes();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Shoe> getShoe(@PathVariable("id") Integer id) {
-
-        if (shoes.get(id) == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Shoe> getShoe(@PathVariable Integer id) {
+        try {
+            Shoe shoe = orderService.getShoe(id);
+            return new ResponseEntity<Shoe>(shoe, HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<Shoe>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(shoes.get(id));
-
     }
 
-    @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
-    public Shoe createShoes(final @RequestBody Shoe shoe) {
-        shoe.setId(idCounter.incrementAndGet());
-        shoes.put(shoe.getId(), shoe);
-        return shoe;
+    @PostMapping()
+    public void addShoe(@RequestBody Shoe shoe) {
+        orderService.saveShoe(shoe);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<Shoe> deleteShoes(@PathVariable("id") int id) {
-        HttpStatus status;
-        if (shoes.get(id) == null) {
-            status = HttpStatus.NOT_FOUND;
-        } else {
-            status = HttpStatus.OK;
-            shoes.remove(id);
-        }
-
-        return ResponseEntity.status(status).build();
-
-    }
-
-    @PutMapping(path = "/{id}")
-    public ResponseEntity<Shoe> updateShoes(final @PathVariable("id") int id, final @RequestBody Shoe shoe) {
-        HttpStatus status;
-        if (shoes.get(id) == null) {
-            status = HttpStatus.NOT_FOUND;
-        } else {
-            status = HttpStatus.OK;
+    @PutMapping("/{id}")
+    public ResponseEntity<Shoe> updateShoe(@RequestBody Shoe shoe, @PathVariable Integer id) {
+        try {
+            Shoe existShoe = orderService.getShoe(id);
             shoe.setId(id);
-            shoes.put(id, shoe);
+            orderService.saveShoe(shoe);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.status(status).build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Shoe> deleteShoe(@PathVariable Integer id) {
+        try {
+            Shoe existShoe = orderService.getShoe(id);
+            orderService.deleteShoe(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 }
