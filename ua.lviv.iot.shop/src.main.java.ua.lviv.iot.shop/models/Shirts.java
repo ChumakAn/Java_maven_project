@@ -16,10 +16,11 @@ public class Shirts extends Item {
     private Sleeves typeOfSleeves;
     private Length length;
 
-    public Shirts(final Size size, final Gender gender, final String name, final String color,
+    public Shirts(final Integer id, final Size size, final Gender gender, final String name, final String color,
                   final String material, final String brand, final Country originCountry,
                   final Double price, final Target target, final Length length) {
-        super(size, gender, name, color, material, brand, originCountry, price, target);
+        super(id, size, gender, name, color, material, brand, originCountry, price, target);
+        this.id = id;
         this.length = length;
     }
 }
