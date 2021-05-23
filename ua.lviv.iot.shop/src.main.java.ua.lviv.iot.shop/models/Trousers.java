@@ -8,7 +8,6 @@ import ua.lviv.iot.shop.enums.*;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true, includeFieldNames = true)
-
 public class Trousers extends Item {
     private Type type;
 
@@ -16,7 +15,6 @@ public class Trousers extends Item {
                     final String material, final String brand, final Country originCountry, final Double price,
                     final Target target, final Type type) {
         super(size, gender, name, color, material, brand, originCountry, price, target);
-
         this.type = type;
 
     }

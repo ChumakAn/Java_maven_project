@@ -13,8 +13,6 @@ import ua.lviv.iot.shop.enums.Target;
 @ToString
 
 public class Item {
-
-
     protected Size size;
     protected Gender gender;
     protected String name;

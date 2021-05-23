@@ -20,7 +20,6 @@ public class Shirts extends Item {
                   final String material, final String brand, final Country originCountry,
                   final Double price, final Target target, final Length length) {
         super(size, gender, name, color, material, brand, originCountry, price, target);
-
         this.length = length;
     }
 }
